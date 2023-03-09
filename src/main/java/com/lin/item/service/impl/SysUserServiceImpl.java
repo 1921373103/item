@@ -1,10 +1,12 @@
 package com.lin.item.service.impl;
 
+import cn.hutool.core.date.DateUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.lin.item.common.config.RedisConfig;
 import com.lin.item.common.constant.PromptConstant;
 import com.lin.item.common.constant.UserConstants;
+import com.lin.item.common.enums.DataEnum;
 import com.lin.item.common.exception.CustomException;
 import com.lin.item.common.util.SecurityUtil;
 import com.lin.item.dao.SysUserDao;
@@ -13,6 +15,7 @@ import com.lin.item.service.ISysUserService;
 import io.netty.util.internal.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -55,5 +58,64 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserDao, SysUser> impleme
             throw new CustomException(UserConstants.LONIN_ERROR_MSG);
         }
         return sysUser;
+    }
+
+    /**
+     * 新增营销账号
+     * @param sysUser 数据
+     * @return 结果
+     */
+    @Override
+    @Transactional(rollbackFor = CustomException.class)
+    public Boolean add(SysUser sysUser) {
+        // 判断登录名是否重复
+        if (0 < list(new QueryWrapper<SysUser>().lambda()
+                .eq(SysUser::getSysUserLogin, sysUser.getSysUserLogin())
+                .eq(SysUser::getIsDel, DataEnum.USING.getCode())).size()) {
+            throw new CustomException("登录名已存在!");
+        }
+        // 密码加密
+        sysUser.setSysUserPwd(SecurityUtil.enMd5PassWord(sysUser.getSysUserPwd()));
+        sysUser.setCreateBy(SecurityUtil.getSysUserLogin());
+        sysUser.setCreateTime(DateUtil.date());
+        return save(sysUser);
+    }
+
+    /**
+     * 修改营销账号
+     * @param sysUser 数据
+     * @return 结果
+     */
+    @Override
+    @Transactional(rollbackFor = CustomException.class)
+    public Boolean edit(SysUser sysUser) {
+        // 判断登录名是否修改
+        if (!SecurityUtil.getSysUserLogin().equals(sysUser.getSysUserLogin())) {
+            // 判断登录名是否重复
+            if (0 < list(new QueryWrapper<SysUser>().lambda()
+                    .eq(SysUser::getSysUserLogin, sysUser.getSysUserLogin())
+                    .eq(SysUser::getIsDel, DataEnum.USING.getCode())).size()) {
+                throw new CustomException("登录名已存在!");
+            }
+        }
+        // 密码加密
+        sysUser.setSysUserPwd(SecurityUtil.enMd5PassWord(sysUser.getSysUserPwd()));
+        sysUser.setUpdateBy(SecurityUtil.getSysUserLogin());
+        sysUser.setUpdateTime(DateUtil.date());
+        return updateById(sysUser);
+    }
+
+    /**
+     * 删除营销账号
+     * @param sysUserId 营销账号ID
+     * @return 结果
+     */
+    @Override
+    @Transactional(rollbackFor = CustomException.class)
+    public Boolean removeBySysUserId(Integer sysUserId) {
+        if (1 == sysUserId) {
+            throw new CustomException("不允许删除");
+        }
+        return removeById(sysUserId);
     }
 }

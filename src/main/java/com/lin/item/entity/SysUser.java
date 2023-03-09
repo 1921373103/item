@@ -1,9 +1,13 @@
 package com.lin.item.entity;
 
+import com.alibaba.excel.annotation.format.DateTimeFormat;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.lin.item.common.entity.BaseEntity;
+import com.lin.item.common.enums.DataEnum;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -39,11 +43,19 @@ public class SysUser implements Serializable {
     private String createBy;
 
     /** 创建时间 */
+    @DateTimeFormat(value = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date createTime;
 
     /** 修改人 */
     private String updateBy;
 
     /** 修改时间 */
+    @DateTimeFormat(value = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date updateTime;
+
+    /** 0：在用，1：停用 */
+    @TableLogic
+    private Integer isDel = DataEnum.USING.getCode();
 }

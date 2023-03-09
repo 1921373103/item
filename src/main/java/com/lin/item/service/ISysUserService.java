@@ -17,4 +17,19 @@ public interface ISysUserService extends IService<SysUser> {
      * @return 用户信息
      */
     SysUser login(String sysUserLogin, String sysUserPwd);
+
+    /**
+     * 新增营销账号
+     */
+    Boolean add(SysUser sysUser);
+
+    /**
+     * 修改营销账号
+     */
+    Boolean edit(SysUser sysUser);
+
+    /**
+     * 删除营销账号
+     */
+    Boolean removeBySysUserId(Integer sysUserId);
 }

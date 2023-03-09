@@ -28,10 +28,6 @@ public class SysLoginController {
     @Autowired
     private ISysUserService sysUserService;
 
-    /** redis工具类 */
-    @Autowired
-    private RedisConfig redisConfig;
-
     /**
      * 用户登录
      */

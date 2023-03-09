@@ -3,6 +3,8 @@ package com.lin.item.common.util;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.crypto.SecureUtil;
 import com.lin.item.common.constant.SystemConstant;
+import com.lin.item.common.constant.TokenConstant;
+import com.lin.item.entity.SysUser;
 
 /**
  * @Author: L
@@ -11,6 +13,14 @@ import com.lin.item.common.constant.SystemConstant;
  */
 public class SecurityUtil {
 
+    /**
+     * 使用session获取用户登录名
+     * @return
+     */
+    public static String getSysUserLogin() {
+        SysUser user = (SysUser) StpUtil.getSession().get(TokenConstant.SESSION);
+        return user.getSysUserLogin();
+    }
 
     /**
      * 生成MD5加盐密码
