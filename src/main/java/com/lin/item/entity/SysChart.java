@@ -14,27 +14,21 @@ import java.util.Date;
 
 /**
  * @Author: L
- * @Date: 2023/3/9 18:21
- * @Desc: 图片附件
+ * @Date: 2023/3/9 20:32
+ * @Desc: 轮播图
  */
 @Data
-@TableName("sys_file")
-public class SysFile implements Serializable {
+@TableName("sys_chart")
+public class SysChart implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    /** 图片ID */
+    /** 轮播图主键 */
     @TableId(type = IdType.AUTO)
+    private Integer chartId;
+
+    /** 图片ID */
     private Integer fileId;
-
-    /** 文件名称 */
-    private String fileName;
-
-    /** 文件组 */
-    private String fileGroup;
-
-    /** 文件访问地址 */
-    private String fileUrl;
 
     /** 创建人 */
     private String createBy;
