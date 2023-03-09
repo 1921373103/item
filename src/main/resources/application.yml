@@ -71,6 +71,13 @@ spring:
         max-idle: 10
         # 连接池中的最小空闲连接
         min-idle: 0
+  # 文件上传
+  servlet:
+    multipart:
+      # 单个文件大小
+      max-file-size:  10MB
+      # 设置总上传的文件大小
+      max-request-size:  20MB
 
 timeout: 21600
 
@@ -116,3 +123,13 @@ thread:
     keep-alive-time: 10
     # 最大队列数
     max-queue-size: 1000
+
+
+# Fds配置
+fdfs:
+  connect-timeout: 10000
+  so-timeout: 3000
+  tracker-list:
+    - abc.starlin.cc:22122
+  host: http://abc.starlin.cc:8874/
+  group: group1
