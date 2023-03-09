@@ -2,9 +2,12 @@ package com.lin.item.controller;
 
 import cn.dev33.satoken.annotation.SaCheckLogin;
 import com.lin.item.common.entity.Result;
+import com.lin.item.common.interfaces.SelectGroup;
 import com.lin.item.entity.SysUser;
 import com.lin.item.service.ISysUserService;
+import com.lin.item.vo.SysUserVo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,12 +25,21 @@ public class SysUserController {
     private ISysUserService sysUserService;
 
     /**
-     * 查询营销用户
+     * 查询营销用户(带分页)
      */
     @SaCheckLogin
     @GetMapping("/list")
-    public Result list() {
-        return Result.success(sysUserService.list());
+    public Result list(@Validated(SelectGroup.class) SysUserVo sysUserVo) {
+        return Result.success(sysUserService.queryPage(sysUserVo));
+    }
+
+    /**
+     * 根据营销用户ID查询
+     */
+    @SaCheckLogin
+    @GetMapping("/{sysUserId}")
+    public Result getInfo(@PathVariable Integer sysUserId) {
+        return Result.success(sysUserService.getInfo(sysUserId));
     }
 
     /**

@@ -2,16 +2,19 @@ package com.lin.item.service.impl;
 
 import cn.hutool.core.date.DateUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.lin.item.common.config.RedisConfig;
 import com.lin.item.common.constant.PromptConstant;
 import com.lin.item.common.constant.UserConstants;
+import com.lin.item.common.entity.IPage;
 import com.lin.item.common.enums.DataEnum;
 import com.lin.item.common.exception.CustomException;
 import com.lin.item.common.util.SecurityUtil;
 import com.lin.item.dao.SysUserDao;
 import com.lin.item.entity.SysUser;
 import com.lin.item.service.ISysUserService;
+import com.lin.item.vo.SysUserVo;
 import io.netty.util.internal.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -58,6 +61,36 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserDao, SysUser> impleme
             throw new CustomException(UserConstants.LONIN_ERROR_MSG);
         }
         return sysUser;
+    }
+
+    /**
+     * 查询营销用户(带分页)
+     */
+    @Override
+    public IPage<SysUser> queryPage(SysUserVo sysUserVo) {
+
+        // 初始化page
+        Page<SysUser> page = new Page<>(sysUserVo.getPageNum(), sysUserVo.getPageSize());
+
+        // 执行查询
+        Page<SysUser> result = sysUserDao.selectPage(page, new QueryWrapper<SysUser>());
+
+        result.getRecords().forEach(res -> {
+            res.setSysUserPwd(null);
+        });
+
+        // 总数、结果
+        return new IPage(result.getTotal(), result.getCurrent(), result.getRecords());
+    }
+
+    /**
+     * 根据营销用户ID查询
+     */
+    @Override
+    public SysUser getInfo(Integer sysUserId) {
+        SysUser byId = getById(sysUserId);
+        byId.setSysUserPwd(null);
+        return byId;
     }
 
     /**

@@ -1,5 +1,6 @@
 package com.lin.item.controller;
 
+import cn.dev33.satoken.annotation.SaCheckLogin;
 import com.lin.item.common.entity.Result;
 import com.lin.item.service.ISysConfigService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,7 @@ public class SysConfigController {
     /**
      * 获取微信支付金额
      */
+    @SaCheckLogin
     @GetMapping("/WechatPrice")
     public Result getWechatPrice() {
         return Result.success(iSysConfigService.getWechatPrice());
@@ -28,6 +30,7 @@ public class SysConfigController {
     /**
      * 修改微信支付金额
      */
+    @SaCheckLogin
     @PutMapping("/WechatPrice")
     public Result editWechatPrice(String configValue) {
         return Result.toAjax(iSysConfigService.editWechatPrice(configValue));
@@ -37,6 +40,7 @@ public class SysConfigController {
     /**
      * 获取跳转链接
      */
+    @SaCheckLogin
     @GetMapping("/LinkUrl")
     public Result getLinkUrl() {
         return Result.success(iSysConfigService.getLinkUrl());
@@ -45,6 +49,7 @@ public class SysConfigController {
     /**
      * 修改跳转链接
      */
+    @SaCheckLogin
     @PutMapping("/LinkUrl")
     public Result editLinkUrl(String configValue) {
         return Result.toAjax(iSysConfigService.editLinkUrl(configValue));

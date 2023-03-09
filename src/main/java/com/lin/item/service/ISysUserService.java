@@ -1,7 +1,9 @@
 package com.lin.item.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.lin.item.common.entity.IPage;
 import com.lin.item.entity.SysUser;
+import com.lin.item.vo.SysUserVo;
 
 /**
  * @Author: L
@@ -17,6 +19,16 @@ public interface ISysUserService extends IService<SysUser> {
      * @return 用户信息
      */
     SysUser login(String sysUserLogin, String sysUserPwd);
+
+    /**
+     * 查询营销用户(带分页)
+     */
+    IPage<SysUser> queryPage(SysUserVo sysUserVo);
+
+    /**
+     * 根据营销用户ID查询
+     */
+    SysUser getInfo(Integer sysUserId);
 
     /**
      * 新增营销账号

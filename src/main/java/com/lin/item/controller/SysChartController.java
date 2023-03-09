@@ -1,5 +1,6 @@
 package com.lin.item.controller;
 
+import cn.dev33.satoken.annotation.SaCheckLogin;
 import com.lin.item.common.entity.Result;
 import com.lin.item.entity.SysChart;
 import com.lin.item.service.ISysChartService;
@@ -24,6 +25,7 @@ public class SysChartController {
     /**
      * 查询轮播图
      */
+    @SaCheckLogin
     @GetMapping("/list")
     public Result list() {
         return Result.success(iSysChartService.listAll());
@@ -32,6 +34,7 @@ public class SysChartController {
     /**
      * 替换
      */
+    @SaCheckLogin
     @PostMapping
     public Result replace(@RequestBody List<SysChart> sysChart) {
         return Result.toAjax(iSysChartService.replace(sysChart));
@@ -40,6 +43,7 @@ public class SysChartController {
     /**
      * 删除轮播图
      */
+    @SaCheckLogin
     @DeleteMapping("/{chartIds}")
     public Result removeByIds(@PathVariable Integer[] chartIds) {
         return Result.toAjax(iSysChartService.removeByIds(Arrays.asList(chartIds)));

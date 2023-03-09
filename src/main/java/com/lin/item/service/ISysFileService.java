@@ -1,7 +1,9 @@
 package com.lin.item.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.lin.item.common.entity.IPage;
 import com.lin.item.entity.SysFile;
+import com.lin.item.vo.SysFileVo;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -18,4 +20,9 @@ public interface ISysFileService extends IService<SysFile> {
      * @return 结果
      */
     SysFile upload(MultipartFile file) throws Exception;
+
+    /**
+     * 获取所有图片(带分页)
+     */
+    IPage<SysFile> queryPage(SysFileVo sysFileVo);
 }

@@ -1,14 +1,19 @@
 package com.lin.item.service.impl;
 
 import cn.hutool.core.date.DateUtil;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.tobato.fastdfs.domain.fdfs.StorePath;
 import com.github.tobato.fastdfs.service.FastFileStorageClient;
+import com.lin.item.common.entity.IPage;
 import com.lin.item.common.exception.CustomException;
 import com.lin.item.common.util.SecurityUtil;
 import com.lin.item.dao.SysFileDao;
 import com.lin.item.entity.SysFile;
+import com.lin.item.entity.SysUser;
 import com.lin.item.service.ISysFileService;
+import com.lin.item.vo.SysFileVo;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -67,5 +72,20 @@ public class SysFileServiceImpl extends ServiceImpl<SysFileDao, SysFile> impleme
             throw new CustomException("图片上传失败!");
         }
         return sysFile;
+    }
+
+    /**
+     * 获取所有图片(带分页)
+     */
+    @Override
+    public IPage<SysFile> queryPage(SysFileVo sysFileVo) {
+        // 初始化page
+        Page<SysFile> page = new Page<>(sysFileVo.getPageNum(), sysFileVo.getPageSize());
+
+        // 执行查询
+        Page<SysFile> result = sysFileDao.selectPage(page, new QueryWrapper<SysFile>());
+
+        // 总数、结果
+        return new IPage(result.getTotal(), result.getCurrent(), result.getRecords());
     }
 }
