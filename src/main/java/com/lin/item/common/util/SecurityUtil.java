@@ -22,6 +22,11 @@ public class SecurityUtil {
         return user.getSysUserLogin();
     }
 
+    public static String getSysUserName() {
+        SysUser user = (SysUser) StpUtil.getSession().get(TokenConstant.SESSION);
+        return user.getSysUserName();
+    }
+
     /**
      * 生成MD5加盐密码
      */
