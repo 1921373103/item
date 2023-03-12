@@ -107,6 +107,12 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserDao, SysUser> impleme
                 .eq(SysUser::getIsDel, DataEnum.USING.getCode())).size()) {
             throw new CustomException("登录名已存在!");
         }
+        // 判断用户名是否重复
+        if (0 < list(new QueryWrapper<SysUser>().lambda()
+                .eq(SysUser::getSysUserName, sysUser.getSysUserName())
+                .eq(SysUser::getIsDel, DataEnum.USING.getCode())).size()){
+            throw new CustomException("用户名已存在!");
+        }
         // 密码加密
         sysUser.setSysUserPwd(SecurityUtil.enMd5PassWord(sysUser.getSysUserPwd()));
         sysUser.setCreateBy(SecurityUtil.getSysUserLogin());
@@ -129,6 +135,15 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserDao, SysUser> impleme
                     .eq(SysUser::getSysUserLogin, sysUser.getSysUserLogin())
                     .eq(SysUser::getIsDel, DataEnum.USING.getCode())).size()) {
                 throw new CustomException("登录名已存在!");
+            }
+        }
+        // 判断用户名是否修改
+        if (!SecurityUtil.getSysUserName().equals(sysUser.getSysUserName())) {
+            // 判断用户名是否重复
+            if (0 < list(new QueryWrapper<SysUser>().lambda()
+                    .eq(SysUser::getSysUserName, sysUser.getSysUserName())
+                    .eq(SysUser::getIsDel, DataEnum.USING.getCode())).size()){
+                throw new CustomException("用户名已存在!");
             }
         }
         // 密码加密

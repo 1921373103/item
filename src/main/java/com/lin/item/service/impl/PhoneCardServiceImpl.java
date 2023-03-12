@@ -5,14 +5,17 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.lin.item.common.entity.IPage;
+import com.lin.item.common.exception.CustomException;
 import com.lin.item.common.util.SecurityUtil;
 import com.lin.item.dao.PhoneCardDao;
+import com.lin.item.dao.SysUserDao;
 import com.lin.item.entity.PhoneCard;
 import com.lin.item.entity.SysUser;
 import com.lin.item.service.IPhoneCardService;
 import com.lin.item.vo.PhoneCardVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @Author: L
@@ -24,6 +27,9 @@ public class PhoneCardServiceImpl extends ServiceImpl<PhoneCardDao, PhoneCard> i
 
     @Autowired
     private PhoneCardDao phoneCardDao;
+
+    @Autowired
+    private SysUserDao sysUserDao;
 
     /**
      * 查询校园卡(管理员查所有) - 分页
@@ -52,10 +58,16 @@ public class PhoneCardServiceImpl extends ServiceImpl<PhoneCardDao, PhoneCard> i
      * @return jieguo
      */
     @Override
+    @Transactional(rollbackFor = CustomException.class)
     public Boolean add(PhoneCard phoneCard) {
+        SysUser sysUser = sysUserDao.selectOne(new QueryWrapper<SysUser>().lambda().eq(SysUser::getSysUserName, phoneCard.getAfterCare()));
+        if (null == sysUser) {
+            throw new CustomException("售后人员不存在!");
+        }
+        // 0未交钱 1已交钱 2交钱未激活
         phoneCard.setCardStatus(0);
-        phoneCard.setAfterCare(SecurityUtil.getSysUserName());
-        phoneCard.setCreateBy(SecurityUtil.getSysUserLogin());
+        phoneCard.setAfterCare(sysUser.getSysUserName());
+        phoneCard.setCreateBy(sysUser.getSysUserLogin());
         phoneCard.setCreateTime(DateUtil.date());
         return save(phoneCard);
     }

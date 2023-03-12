@@ -38,7 +38,6 @@ public class PhoneCardController {
     /**
      * 根据校园电话卡查询信息
      */
-    @SaCheckLogin
     @GetMapping("/{campusTelephoneCard}")
     public Result getInfoByCampusTelephoneCard(@PathVariable String campusTelephoneCard) {
         return Result.success(iPhoneCardService.getOne(new QueryWrapper<PhoneCard>().lambda().eq(PhoneCard::getCampusTelephoneCard, campusTelephoneCard)));
@@ -47,7 +46,6 @@ public class PhoneCardController {
     /**
      * 新增校园电话卡登记
      */
-    @SaCheckLogin
     @PostMapping
     public Result add(@RequestBody PhoneCard phoneCard) {
         return Result.toAjax(iPhoneCardService.add(phoneCard));
