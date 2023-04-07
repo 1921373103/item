@@ -22,7 +22,7 @@ public interface ISysConfigService extends IService<SysConfig> {
      * @param configValue 金额
      * @return 结果
      */
-    Boolean editWechatPrice(String configValue);
+    String editWechatPrice(String configValue);
 
     /**
      * 获取跳转链接
@@ -34,6 +34,6 @@ public interface ISysConfigService extends IService<SysConfig> {
      * 修改跳转链接
      * @return 结果
      */
-    Boolean editLinkUrl(String configValue);
+    String editLinkUrl(String configValue);
 
 }

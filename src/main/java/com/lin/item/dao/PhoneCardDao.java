@@ -3,6 +3,7 @@ package com.lin.item.dao;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.lin.item.entity.PhoneCard;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Update;
 
 /**
  * @Author: L
@@ -12,4 +13,9 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface PhoneCardDao extends BaseMapper<PhoneCard> {
 
+    /**
+     * 根据校园卡更新状态
+     * @param phoneCard
+     */
+    void updateByCampusTelephoneCard(PhoneCard phoneCard);
 }

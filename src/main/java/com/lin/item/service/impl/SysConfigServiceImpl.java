@@ -3,11 +3,13 @@ package com.lin.item.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.lin.item.common.exception.CustomException;
 import com.lin.item.dao.SysConfigDao;
 import com.lin.item.entity.SysConfig;
 import com.lin.item.service.ISysConfigService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 
@@ -36,8 +38,13 @@ public class SysConfigServiceImpl extends ServiceImpl<SysConfigDao, SysConfig> i
      * @return 结果
      */
     @Override
-    public Boolean editWechatPrice(String configValue) {
-        return update(new UpdateWrapper<SysConfig>().lambda().set(SysConfig::getConfigValue, configValue).eq(SysConfig::getConfigKey, "wechat_price"));
+    @Transactional(rollbackFor = CustomException.class)
+    public String editWechatPrice(String configValue) {
+        boolean wechatPrice = update(new UpdateWrapper<SysConfig>().lambda().set(SysConfig::getConfigValue, configValue).eq(SysConfig::getConfigKey, "wechat_price"));
+        if (wechatPrice == Boolean.TRUE) {
+            throw new CustomException("修改微信支付金额失败!");
+        }
+        return configValue;
     }
 
     /**
@@ -55,7 +62,12 @@ public class SysConfigServiceImpl extends ServiceImpl<SysConfigDao, SysConfig> i
      * @return 结果
      */
     @Override
-    public Boolean editLinkUrl(String configValue) {
-        return update(new UpdateWrapper<SysConfig>().lambda().set(SysConfig::getConfigValue, configValue).eq(SysConfig::getConfigKey, "link_url"));
+    @Transactional(rollbackFor = CustomException.class)
+    public String editLinkUrl(String configValue) {
+        boolean flag = update(new UpdateWrapper<SysConfig>().lambda().set(SysConfig::getConfigValue, configValue).eq(SysConfig::getConfigKey, "link_url"));
+        if (flag == Boolean.FALSE) {
+            throw new CustomException("修改微信支付金额失败!");
+        }
+        return configValue;
     }
 }

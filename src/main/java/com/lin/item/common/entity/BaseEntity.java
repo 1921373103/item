@@ -32,7 +32,7 @@ public class BaseEntity implements Serializable {
     private String srotOrder;
 
     /** 创建时间区间查询 */
-    private String[] createTimeBetween;
+    private CreateTime time;
 
     /** AOP等数据 */
     private Map<String, Object> params;

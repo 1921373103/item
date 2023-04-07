@@ -1,6 +1,7 @@
 package com.lin.item.service.impl;
 
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -43,6 +44,15 @@ public class PhoneCardServiceImpl extends ServiceImpl<PhoneCardDao, PhoneCard> i
         QueryWrapper<PhoneCard> wrapper = new QueryWrapper<PhoneCard>();
         if (!"1".equals(SecurityUtil.getSysUserId())) {
             wrapper.lambda().eq(PhoneCard::getCreateBy,SecurityUtil.getSysUserLogin());
+        }
+
+        // 根据电话号码模糊查询
+        if (!StrUtil.isEmpty(phoneCardVo.getCampusTelephoneCard())){
+            wrapper.lambda().like(PhoneCard::getCampusTelephoneCard, phoneCardVo.getCampusTelephoneCard());
+        }
+        // 查询用户创建时间区间
+        if (null != (phoneCardVo.getTime())) {
+            wrapper.lambda().between(PhoneCard::getCreateTime, phoneCardVo.getTime().getCreateTimeS(), phoneCardVo.getTime().getCreateTimeE());
         }
 
         // 执行查询

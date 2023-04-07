@@ -1,6 +1,7 @@
 package com.lin.item.service.impl;
 
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -12,6 +13,7 @@ import com.lin.item.common.enums.DataEnum;
 import com.lin.item.common.exception.CustomException;
 import com.lin.item.common.util.SecurityUtil;
 import com.lin.item.dao.SysUserDao;
+import com.lin.item.entity.PhoneCard;
 import com.lin.item.entity.SysUser;
 import com.lin.item.service.ISysUserService;
 import com.lin.item.vo.SysUserVo;
@@ -72,12 +74,26 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserDao, SysUser> impleme
         // 初始化page
         Page<SysUser> page = new Page<>(sysUserVo.getPageNum(), sysUserVo.getPageSize());
 
+        QueryWrapper<SysUser> wrapper = new QueryWrapper<SysUser>();
+
+        // 根据用户名称查询
+        if (StrUtil.isNotEmpty(sysUserVo.getSysUserName())) {
+            wrapper.lambda().like(SysUser::getSysUserName, sysUserVo.getSysUserName());
+        }
+
+        // 查询用户创建时间区间
+        if (null != (sysUserVo.getTime())) {
+            wrapper.lambda().between(SysUser::getCreateTime, sysUserVo.getTime().getCreateTimeS(), sysUserVo.getTime().getCreateTimeE());
+        }
+
         // 执行查询
-        Page<SysUser> result = sysUserDao.selectPage(page, new QueryWrapper<SysUser>());
+        Page<SysUser> result = sysUserDao.selectPage(page, wrapper);
 
         result.getRecords().forEach(res -> {
             res.setSysUserPwd(null);
         });
+
+
 
         // 总数、结果
         return new IPage(result.getTotal(), result.getCurrent(), result.getRecords());

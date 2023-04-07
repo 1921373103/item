@@ -33,6 +33,9 @@ public class SysChartDto implements Serializable {
     /** 图片地址 */
     private String fileUrl;
 
+    /** 0：在用，1：停用 */
+    private Integer status = DataEnum.USING.getCode();
+
     /** 创建人 */
     private String createBy;
 

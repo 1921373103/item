@@ -30,6 +30,9 @@ public class SysChart implements Serializable {
     /** 图片ID */
     private Integer fileId;
 
+    /** 0：在用，1：停用 */
+    private Integer status = DataEnum.USING.getCode();
+
     /** 创建人 */
     private String createBy;
 

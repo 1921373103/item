@@ -2,6 +2,7 @@ package com.lin.item.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.lin.item.common.exception.CustomException;
 import com.lin.item.common.util.SecurityUtil;
@@ -45,7 +46,9 @@ public class SysChartServiceImpl extends ServiceImpl<SysChartDao, SysChart> impl
             chartDtoList.add(sysChartDto);
         });
         chartDtoList.forEach(chart -> {
-            chart.setFileUrl(sysFileDao.selectById(chart.getFileId()).getFileUrl());
+            if (null != sysFileDao.selectById(chart.getFileId())) {
+                chart.setFileUrl(sysFileDao.selectById(chart.getFileId()).getFileUrl());
+            }
         });
         return chartDtoList;
     }

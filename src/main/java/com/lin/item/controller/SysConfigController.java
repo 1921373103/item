@@ -33,7 +33,7 @@ public class SysConfigController {
     @SaCheckLogin
     @PutMapping("/WechatPrice")
     public Result editWechatPrice(String configValue) {
-        return Result.toAjax(iSysConfigService.editWechatPrice(configValue));
+        return Result.success(iSysConfigService.editWechatPrice(configValue));
     }
 
 
@@ -52,7 +52,7 @@ public class SysConfigController {
     @SaCheckLogin
     @PutMapping("/LinkUrl")
     public Result editLinkUrl(String configValue) {
-        return Result.toAjax(iSysConfigService.editLinkUrl(configValue));
+        return Result.success(iSysConfigService.editLinkUrl(configValue));
     }
 
 

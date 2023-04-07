@@ -110,7 +110,7 @@ mybatis-plus:
       logic-not-delete-value: 0
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
-  mapper-locations: classpath*:templates/mapper/*/*.xml
+  mapper-locations: classpath*:mapper/*.xml
 
 # 线程池配置
 thread:
@@ -133,3 +133,13 @@ fdfs:
     - abc.starlin.cc:22122
   host: http://abc.starlin.cc:8874/
   group: group1
+
+# 微信支付
+wechat:
+  appId: wxa08311d097dc10c3
+  mchId: 1641478481
+  wxOrder: https://api.mch.weixin.qq.com/v3/pay/transactions/jsapi
+  notifyUrl: null
+  key: FD30811350D3DB7E36AA3942E9D7E250
+  wxSign: SIGN=WXPay
+  mchSerialNo: 42236C4F027E8287310783203001940A911E4183
