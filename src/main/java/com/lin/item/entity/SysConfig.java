@@ -36,6 +36,9 @@ public class SysConfig implements Serializable {
     /** 参数键值 */
     private String configValue;
 
+    /** 图片 */
+    private String icon;
+
     /** 备注 */
     private String remark;
 

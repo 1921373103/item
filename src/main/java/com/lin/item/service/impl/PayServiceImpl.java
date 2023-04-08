@@ -48,68 +48,61 @@ public class PayServiceImpl implements IPayService {
      *         payer.put("openid", openid); //用户在小程序侧的openid
      *         params.put("payer", payer); //支付者信息
      *         {
-     * 	"sp_mchid": "1900007XXX",
-     * 	"sub_mchid": "1900008XXX",
-     * 	"out_trade_no": "1217752501201407033233368318",
+     * 	"sp_mchid": "1900006XXX",
+     * 	"out_trade_no": "H51217752501201407033233368018",
      * 	"sp_appid": "wxdace645e0bc2cXXX",
-     * 	"sub_appid": "wxdace645e0bc2cXXX",
+     * 	"sub_mchid": "1900006XXX",
      * 	"description": "Image形象店-深圳腾大-QQ公仔",
      * 	"notify_url": "https://weixin.qq.com/",
      * 	"amount": {
      * 		"total": 1,
      * 		"currency": "CNY"
      *        },
-     * 	"payer": {
-     * 		"sp_openid": "o4GgauInH_RCEdvrrNGrntXDuXXX"
+     * 	"scene_info": {
+     * 		"payer_client_ip": "127.0.0.1",
+     * 		"h5_info": {
+     * 			"type": "Wap"
+     *        }
      *    }
      * }
      */
 
     @Override
     @Transactional(rollbackFor = CustomException.class)
-    public Map<String, String> orderPay(JSONObject jsonObject, String campusTelephoneCard) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.MINUTE, calendar.get(Calendar.MINUTE) + 15);
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX");
+    public String orderPay(JSONObject jsonObject) {
 
-        jsonObject.put("out_trade_no", createOutTradeNO());
-        jsonObject.put("time_expire", sdf.format(calendar.getTime()));
+        JSONObject wxPay = jsonObject.getJSONObject("wxPay");
+
+        wxPay.put("out_trade_no", createOutTradeNO());
 
         //发起请求
-        JSONObject res = wechatPayUtil.sendPost(WechatPayConfig.WX_ORDER_URL, jsonObject);
+        JSONObject res = wechatPayUtil.sendPost(WechatPayConfig.WX_ORDER_URL, wxPay);
 
         // 修改状态
-        PhoneCard phoneCard = new PhoneCard();
+        PhoneCard phoneCard = setPhoneCard(jsonObject.getJSONObject("subForm"));
+        System.out.println("phoneCard = " + phoneCard);
         phoneCard.setCardStatus(1);
-        phoneCard.setCampusTelephoneCard(campusTelephoneCard);
-        phoneCardDao.updateByCampusTelephoneCard(phoneCard);
-        if ((res == null || StringUtils.isEmpty(res.getString("prepay_id")))) {
+        phoneCardDao.insert(phoneCard);
+        if ((res == null || StringUtils.isEmpty(res.getString("h5_url")))) {
             //@TODO 支付发起失败可以将订单数据回滚
             throw new CustomException("支付发起失败");
         }
 
-        StringBuilder sb = new StringBuilder();
+        return res.getString("h5_url");
+    }
 
-        Map<String, String> result = new HashMap<>();
-        //小程序appid
-        result.put("appId", WechatPayConfig.APP_ID);
-        sb.append(result.get("appId")).append("\n");
-        //时间戳
-        result.put("timeStamp", (System.currentTimeMillis() / 1000) + "");
-        sb.append(result.get("timeStamp")).append("\n");
-        //32位随机字符串
-        result.put("nonceStr", RandomStringUtils.randomAlphanumeric(32));
-        sb.append(result.get("nonceStr")).append("\n");
-        //预支付id 格式为 prepay_id=xxx
-        result.put("package", "prepay_id=" + res.getString("prepay_id"));
-        sb.append(result.get("package")).append("\n");
-        //签名
-        result.put("paySign", wechatPayUtil.signRSA(sb.toString()));
-        //加密方式 固定RSA
-        result.put("signType", "RSA");
-        //商户订单号 此参数不是小程序拉起支付所需的参数 因此不参与签名
-        result.put("out_trade_no", res.getString("out_trade_no"));
-        return result;
+    // 设置实体
+    public PhoneCard setPhoneCard(JSONObject subForm) {
+        PhoneCard phoneCard = new PhoneCard();
+        phoneCard.setRealName(subForm.getString("realName"));
+        phoneCard.setIdNumber(subForm.getString("idNumber"));
+        phoneCard.setContactNumber(subForm.getString("contactNumber"));
+        phoneCard.setBuilding(subForm.getString("building"));
+        phoneCard.setBedroomNumber(subForm.getString("bedroomNumber"));
+        phoneCard.setAfterCare(subForm.getString("afterCare"));
+        phoneCard.setRemark(subForm.getString("remark"));
+        phoneCard.setCampusTelephoneCard(subForm.getString("campusTelephoneCard"));
+        return phoneCard;
     }
 
     @Override

@@ -6,6 +6,7 @@ import com.lin.item.common.util.WechatPayUtil;
 import com.lin.item.service.IPayService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -32,8 +33,8 @@ public class PayController {
      * 预下单
      */
     @PostMapping("/pay")
-    public Result order(JSONObject jsonObject, String campusTelephoneCard) {
-        return Result.success(ipayService.orderPay(jsonObject, campusTelephoneCard));
+    public Result order(@RequestBody JSONObject jsonObject) {
+        return Result.success(ipayService.orderPay(jsonObject));
     }
 
     /**

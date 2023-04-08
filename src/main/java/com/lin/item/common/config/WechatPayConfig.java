@@ -75,7 +75,7 @@ public class WechatPayConfig {
     /**
      * 下单地址
      **/
-    public static final String WX_ORDER_URL = "https://api.mch.weixin.qq.com/v3/pay/transactions/jsapi";
+    public static final String WX_ORDER_URL = "https://api.mch.weixin.qq.com/v3/pay/partner/transactions/h5";
 
     /**
      * 获取证书

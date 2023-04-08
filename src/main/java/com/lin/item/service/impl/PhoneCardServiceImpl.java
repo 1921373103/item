@@ -46,9 +46,9 @@ public class PhoneCardServiceImpl extends ServiceImpl<PhoneCardDao, PhoneCard> i
             wrapper.lambda().eq(PhoneCard::getCreateBy,SecurityUtil.getSysUserLogin());
         }
 
-        // 根据电话号码模糊查询
-        if (!StrUtil.isEmpty(phoneCardVo.getCampusTelephoneCard())){
-            wrapper.lambda().like(PhoneCard::getCampusTelephoneCard, phoneCardVo.getCampusTelephoneCard());
+        // 根据售后人员模糊查询
+        if (!StrUtil.isEmpty(phoneCardVo.getAfterCare())){
+            wrapper.lambda().like(PhoneCard::getAfterCare, phoneCardVo.getAfterCare());
         }
         // 查询用户创建时间区间
         if (null != (phoneCardVo.getTime())) {

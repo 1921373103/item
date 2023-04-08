@@ -18,7 +18,7 @@ public interface IPayService {
      * @param jsonObject
      * @return
      */
-    Map<String, String> orderPay(JSONObject jsonObject, String campusTelephoneCard);
+    String orderPay(JSONObject jsonObject);
 
     Map<String, String> wechatPayNotify(HttpServletRequest request);
 }

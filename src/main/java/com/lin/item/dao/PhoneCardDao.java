@@ -13,9 +13,4 @@ import org.apache.ibatis.annotations.Update;
 @Mapper
 public interface PhoneCardDao extends BaseMapper<PhoneCard> {
 
-    /**
-     * 根据校园卡更新状态
-     * @param phoneCard
-     */
-    void updateByCampusTelephoneCard(PhoneCard phoneCard);
 }

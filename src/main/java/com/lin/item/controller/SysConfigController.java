@@ -2,6 +2,7 @@ package com.lin.item.controller;
 
 import cn.dev33.satoken.annotation.SaCheckLogin;
 import com.lin.item.common.entity.Result;
+import com.lin.item.entity.SysConfig;
 import com.lin.item.service.ISysConfigService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -21,7 +22,6 @@ public class SysConfigController {
     /**
      * 获取微信支付金额
      */
-    @SaCheckLogin
     @GetMapping("/WechatPrice")
     public Result getWechatPrice() {
         return Result.success(iSysConfigService.getWechatPrice());
@@ -36,14 +36,22 @@ public class SysConfigController {
         return Result.success(iSysConfigService.editWechatPrice(configValue));
     }
 
+    /**
+     * 获取所有链接
+     * @return
+     */
+    @GetMapping("/urlAll")
+    public Result getUrlAll() {
+        return Result.success(iSysConfigService.getUrlAll());
+    }
 
     /**
-     * 获取跳转链接
+     * 新增
      */
     @SaCheckLogin
-    @GetMapping("/LinkUrl")
-    public Result getLinkUrl() {
-        return Result.success(iSysConfigService.getLinkUrl());
+    @PostMapping("/url")
+    public Result addLinkUrl(@RequestBody SysConfig sysConfig) {
+        return Result.toAjax(iSysConfigService.addLinkUrl(sysConfig));
     }
 
     /**
@@ -51,9 +59,19 @@ public class SysConfigController {
      */
     @SaCheckLogin
     @PutMapping("/LinkUrl")
-    public Result editLinkUrl(String configValue) {
-        return Result.success(iSysConfigService.editLinkUrl(configValue));
+    public Result editLinkUrl(@RequestBody SysConfig sysConfig) {
+        return Result.toAjax(iSysConfigService.editLinkUrl(sysConfig));
     }
+
+    /**
+     * 删除
+     */
+    @SaCheckLogin
+    @DeleteMapping("/{configId}")
+    public Result removeConfigId(@PathVariable Integer configId) {
+        return Result.toAjax(iSysConfigService.removeById(configId));
+    }
+
 
 
 }
