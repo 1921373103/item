@@ -25,7 +25,6 @@ public class SysChartController {
     /**
      * 查询轮播图
      */
-    @SaCheckLogin
     @GetMapping("/list")
     public Result list() {
         return Result.success(iSysChartService.listAll());

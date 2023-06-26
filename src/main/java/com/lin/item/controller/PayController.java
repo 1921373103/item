@@ -1,14 +1,14 @@
 package com.lin.item.controller;
 
+import cn.hutool.http.HttpUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.lin.item.common.entity.Result;
+import com.lin.item.common.util.AddressUtils;
+import com.lin.item.common.util.IpUtils;
 import com.lin.item.common.util.WechatPayUtil;
 import com.lin.item.service.IPayService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
@@ -37,6 +37,19 @@ public class PayController {
         return Result.success(ipayService.orderPay(jsonObject));
     }
 
+    /**
+     * 查询订单接口
+     */
+    @GetMapping("/{outTradeNo}")
+    public Map<String, String> getOrderByoutTradeNo(@PathVariable String outTradeNo) {
+        return ipayService.getOrderByoutTradeNo(outTradeNo);
+    }
+
+    @GetMapping("/ip")
+    public String ip(HttpServletRequest request) {
+        // String remoteAddr = request.getRemoteAddr();
+        return IpUtils.getIpAddr(request);
+    }
     /**
      * 微信支付异步通知
      *

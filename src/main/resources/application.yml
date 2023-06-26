@@ -8,8 +8,8 @@ spring:
     name: item
   datasource:
     username: root
-    password: Wanglin1.
-    url: jdbc:mysql://abc.starlin.cc:13306/item?useUnicode=true&characterEncoding=UTF-8&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=GMT%2B8&useSSL=false
+    password: item
+    url: jdbc:mysql://43.139.25.78:13306/item?useUnicode=true&characterEncoding=UTF-8&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=GMT%2B8&useSSL=false&allowPublicKeyRetrieval=true
     driver-class-name: com.mysql.cj.jdbc.Driver
     type: com.alibaba.druid.pool.DruidDataSource
 
@@ -54,7 +54,7 @@ spring:
     # Redis数据库索引（默认为0）
     database: 0
     # Redis服务器地址
-    host: abc.starlin.cc
+    host: 43.139.25.78
     # Redis服务器连接端口
     port: 16379
     # Redis服务器连接密码（默认为空）
@@ -130,15 +130,15 @@ fdfs:
   connect-timeout: 10000
   so-timeout: 3000
   tracker-list:
-    - abc.starlin.cc:22122
-  host: http://abc.starlin.cc:8874/
+    - 43.139.25.78:22122
+  host: http://xyw.daolt.com:8874/
   group: group1
 
 # 微信支付
 wechat:
   appId: wxa08311d097dc10c3
   mchId: 1641478481
-  wxOrder: https://api.mch.weixin.qq.com/v3/pay/transactions/jsapi
+  wxOrder: https://api.mch.weixin.qq.com/v3/pay/transactions/h5
   notifyUrl: null
   key: FD30811350D3DB7E36AA3942E9D7E250
   wxSign: SIGN=WXPay

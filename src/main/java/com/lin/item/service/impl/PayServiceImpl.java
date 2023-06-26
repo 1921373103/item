@@ -1,13 +1,19 @@
 package com.lin.item.service.impl;
 
+import cn.hutool.core.date.DateTime;
+import cn.hutool.core.date.DateUtil;
 import com.alibaba.druid.util.StringUtils;
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.lin.item.common.config.RedisConfig;
 import com.lin.item.common.config.WechatPayConfig;
 import com.lin.item.common.exception.CustomException;
 import com.lin.item.common.util.WechatPayUtil;
 import com.lin.item.dao.PhoneCardDao;
+import com.lin.item.dao.SysUserDao;
 import com.lin.item.entity.PhoneCard;
+import com.lin.item.entity.SysUser;
 import com.lin.item.service.IPayService;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +37,12 @@ public class PayServiceImpl implements IPayService {
 
     @Autowired
     private PhoneCardDao phoneCardDao;
+
+    @Autowired
+    private SysUserDao sysUserDao;
+
+    @Autowired
+    private RedisConfig redisConfig;
 
     /**
      *         JSONObject params = new JSONObject();
@@ -73,35 +85,47 @@ public class PayServiceImpl implements IPayService {
 
         JSONObject wxPay = jsonObject.getJSONObject("wxPay");
 
-        wxPay.put("out_trade_no", createOutTradeNO());
+        String outTradeNO = createOutTradeNO();
+
+        wxPay.put("out_trade_no", outTradeNO);
 
         //发起请求
         JSONObject res = wechatPayUtil.sendPost(WechatPayConfig.WX_ORDER_URL, wxPay);
 
-        // 修改状态
-        PhoneCard phoneCard = setPhoneCard(jsonObject.getJSONObject("subForm"));
-        System.out.println("phoneCard = " + phoneCard);
-        phoneCard.setCardStatus(1);
+        // 设置实体
+        PhoneCard phoneCard = setPhoneCard(jsonObject.getJSONObject("subForm"), outTradeNO);
         phoneCardDao.insert(phoneCard);
         if ((res == null || StringUtils.isEmpty(res.getString("h5_url")))) {
             //@TODO 支付发起失败可以将订单数据回滚
             throw new CustomException("支付发起失败");
         }
-
         return res.getString("h5_url");
     }
 
-    // 设置实体
-    public PhoneCard setPhoneCard(JSONObject subForm) {
+    /**
+     * 设置实体
+      */
+    @Transactional(rollbackFor = CustomException.class)
+    public PhoneCard setPhoneCard(JSONObject subForm, String outTradeNO) {
         PhoneCard phoneCard = new PhoneCard();
         phoneCard.setRealName(subForm.getString("realName"));
         phoneCard.setIdNumber(subForm.getString("idNumber"));
         phoneCard.setContactNumber(subForm.getString("contactNumber"));
         phoneCard.setBuilding(subForm.getString("building"));
         phoneCard.setBedroomNumber(subForm.getString("bedroomNumber"));
+        if (null == phoneCardDao.selectOne(new QueryWrapper<PhoneCard>().lambda().eq(PhoneCard::getCampusTelephoneCard, subForm.getString("campusTelephoneCard")))) {
+            throw new CustomException("校园电话卡已存在!");
+        }
+        phoneCard.setCampusTelephoneCard(subForm.getString("campusTelephoneCard"));
+        SysUser sysUser = sysUserDao.selectOne(new QueryWrapper<SysUser>().lambda().eq(SysUser::getSysUserName, subForm.getString("afterCare")));
+        if (null == sysUser) {
+            throw new CustomException("售后人员不存在!");
+        }
         phoneCard.setAfterCare(subForm.getString("afterCare"));
         phoneCard.setRemark(subForm.getString("remark"));
-        phoneCard.setCampusTelephoneCard(subForm.getString("campusTelephoneCard"));
+        phoneCard.setOutTradeNo(outTradeNO);
+        phoneCard.setCardStatus(0);
+        phoneCard.setCreateTime(DateUtil.date());
         return phoneCard;
     }
 
@@ -119,6 +143,30 @@ public class PayServiceImpl implements IPayService {
 
         result.put("code", "SUCCESS");
         result.put("message", "OK");
+        return result;
+    }
+
+    /**
+     * 查询订单接口
+     */
+    @Override
+    @Transactional(rollbackFor = CustomException.class)
+    public Map<String, String> getOrderByoutTradeNo(String outTradeNo) {
+        Map<String, String> result = new HashMap<>(2);
+        String mchid = "1641478481";
+        String Url = "https://api.mch.weixin.qq.com/v3/pay/transactions/out-trade-no/" + outTradeNo + "?mchid=" + mchid;
+        JSONObject s = wechatPayUtil.sendGet(Url);
+        if (Objects.equals(s.getString("trade_state"), "SUCCESS")) {
+            result.put("code", "SUCCESS");
+            result.put("message", "支付成功");
+            PhoneCard phoneCard = new PhoneCard();
+            phoneCard.setOutTradeNo(outTradeNo);
+            phoneCard.setCardStatus(1);
+            phoneCardDao.update(phoneCard, new UpdateWrapper<PhoneCard>().lambda().eq(PhoneCard::getOutTradeNo, outTradeNo));
+            return result;
+        }
+        result.put("code", "FAIL");
+        result.put("message", "支付失败");
         return result;
     }
 

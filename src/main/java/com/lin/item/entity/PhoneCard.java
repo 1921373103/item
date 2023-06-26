@@ -55,6 +55,9 @@ public class PhoneCard implements Serializable {
     /** 卡状态 (未交钱、交钱已激活、交钱未激活) */
     private Integer cardStatus;
 
+    /** 商户订单号 */
+    private String outTradeNo;
+
     /** 创建人 */
     private String createBy;
 

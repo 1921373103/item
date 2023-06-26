@@ -21,4 +21,9 @@ public interface IPayService {
     String orderPay(JSONObject jsonObject);
 
     Map<String, String> wechatPayNotify(HttpServletRequest request);
+
+    /**
+     * 查询订单接口
+     */
+    Map<String, String> getOrderByoutTradeNo(String outTradeNo);
 }

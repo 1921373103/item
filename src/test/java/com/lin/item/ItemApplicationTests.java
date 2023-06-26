@@ -1,15 +1,38 @@
 package com.lin.item;
 
+import cn.hutool.http.HttpRequest;
+import cn.hutool.http.HttpResponse;
+import cn.hutool.http.HttpUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.lin.item.common.util.WechatPayUtil;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
 
 @SpringBootTest
 class ItemApplicationTests {
 
+    @Autowired
+    public WechatPayUtil wechatPayUtil;
+
     @Test
     void contextLoads() {
+    }
+
+    private void Order() {
+        HashMap<String, Object> paramMap = new HashMap<>();
+        paramMap.put("mchid", "1641478481");
+        String outTradeNo = "123456789";
+        String mchid = "1641478481";
+        String Url = "https://api.mch.weixin.qq.com/v3/pay/transactions/out-trade-no/" + outTradeNo + "?mchid=" + mchid;
+        System.out.println("Url = " + Url);
+        JSONObject s = wechatPayUtil.sendGet(Url);
+//        String s = HttpUtil.get("https://api.mch.weixin.qq.com/v3/pay/transactions/out-trade-no/" + outTradeNo, paramMap);
+        System.out.println("s = " + s);
     }
 
     public static void main(String[] args) {
